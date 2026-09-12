@@ -4,31 +4,15 @@ import plotly.graph_objects as go
 
 from dash import Dash, dcc, html, Input, Output
 
-
-# =========================================================
-# Load Data
-# =========================================================
-
-df = pd.read_csv(
-    "C:/Users/hp/Desktop/CA-S2-G1-AI/CA_AIS2_G1_Ml/src/data_analysis/dash/Dash.csv"
-)
-
-
+df = pd.read_csv("C:/Users/hp/Desktop/CA-S2-G1-AI/CA_AIS2_G1_Ml/src/data_analysis/dash/Dash.csv")
 # Get numerical columns
 num_cols = df.select_dtypes(include="number").columns
 
-
-# =========================================================
 # Create Dash App
-# =========================================================
-
 app = Dash(__name__)
 app.title = "Interactive Data Dashboard"
 
-
-# =========================================================
 # Colors
-# =========================================================
 
 BACKGROUND = "#f5f7fb"
 CARD_BACKGROUND = "white"
@@ -36,21 +20,10 @@ TEXT = "#1f2937"
 SECONDARY_TEXT = "#6b7280"
 PRIMARY = "#2563eb"
 
-
-# =========================================================
 # Layout
-# =========================================================
-
 app.layout = html.Div(
-
     [
-
-        # -------------------------------------------------
-        # Header
-        # -------------------------------------------------
-
         html.Div(
-
             [
 
                 html.H1(
@@ -61,7 +34,6 @@ app.layout = html.Div(
                         "fontWeight": "700"
                     }
                 ),
-
                 html.P(
                     "Explore and compare numerical data by Area",
                     style={
@@ -70,9 +42,7 @@ app.layout = html.Div(
                         "fontSize": "16px"
                     }
                 )
-
             ],
-
             style={
                 "padding": "30px 40px",
                 "backgroundColor": CARD_BACKGROUND,
@@ -80,23 +50,12 @@ app.layout = html.Div(
             }
         ),
 
-
-        # -------------------------------------------------
         # Main Content
-        # -------------------------------------------------
-
         html.Div(
-
             [
-
-                # -----------------------------------------
                 # Column Selector
-                # -----------------------------------------
-
                 html.Div(
-
                     [
-
                         html.Label(
                             "Select Metric",
                             style={
@@ -109,7 +68,6 @@ app.layout = html.Div(
 
                         dcc.Dropdown(
                             id="column-dropdown",
-
                             options=[
                                 {
                                     "label": col.replace("_", " ").title(),
@@ -117,18 +75,13 @@ app.layout = html.Div(
                                 }
                                 for col in num_cols
                             ],
-
                             value=num_cols[0],
-
                             clearable=False,
-
                             style={
                                 "width": "100%"
                             }
                         )
-
                     ],
-
                     style={
                         "backgroundColor": CARD_BACKGROUND,
                         "padding": "20px",
@@ -138,11 +91,7 @@ app.layout = html.Div(
                     }
                 ),
 
-
-                # -----------------------------------------
                 # KPI Cards
-                # -----------------------------------------
-
                 html.Div(
 
                     [
@@ -257,30 +206,19 @@ app.layout = html.Div(
                     }
                 ),
 
-
-                # -----------------------------------------
                 # Charts
-                # -----------------------------------------
-
                 html.Div(
 
                     [
-
-                        # ---------------------------------
                         # Pie Chart - Plotly Express
-                        # ---------------------------------
-
                         html.Div(
-
                             [
-
                                 dcc.Graph(
                                     id="pie-chart",
                                     config={
                                         "displayModeBar": False
                                     }
                                 )
-
                             ],
 
                             style={
@@ -292,22 +230,15 @@ app.layout = html.Div(
                             }
                         ),
 
-
-                        # ---------------------------------
                         # Bar Chart - Plotly Express
-                        # ---------------------------------
-
                         html.Div(
-
                             [
-
                                 dcc.Graph(
                                     id="bar-chart",
                                     config={
                                         "displayModeBar": False
                                     }
                                 )
-
                             ],
 
                             style={
@@ -319,22 +250,15 @@ app.layout = html.Div(
                             }
                         ),
 
-
-                        # ---------------------------------
                         # Line Chart - Graph Objects
-                        # ---------------------------------
-
                         html.Div(
-
                             [
-
                                 dcc.Graph(
                                     id="line-chart",
                                     config={
                                         "displayModeBar": False
                                     }
                                 )
-
                             ],
 
                             style={
@@ -345,7 +269,6 @@ app.layout = html.Div(
                                     "0 2px 8px rgba(0,0,0,0.05)"
                             }
                         )
-
                     ],
 
                     style={
@@ -356,15 +279,9 @@ app.layout = html.Div(
                     }
                 ),
 
-
-                # -----------------------------------------
                 # Data Table
-                # -----------------------------------------
-
                 html.Div(
-
                     [
-
                         html.H3(
                             "Area Summary",
                             style={
@@ -376,7 +293,6 @@ app.layout = html.Div(
                         html.Div(
                             id="summary-table"
                         )
-
                     ],
 
                     style={
@@ -405,10 +321,7 @@ app.layout = html.Div(
 )
 
 
-# =========================================================
 # Callback
-# =========================================================
-
 @app.callback(
 
     [
@@ -438,25 +351,16 @@ app.layout = html.Div(
 
 def update_dashboard(selected_col):
 
-
-    # =====================================================
     # Group Data by Area
-    # =====================================================
-
     grouped = (
 
         df.groupby("Area")[selected_col]
         .sum()
         .reset_index()
         .sort_values(selected_col, ascending=False)
-
     )
 
-
-    # =====================================================
     # KPI Calculations
-    # =====================================================
-
     number_of_areas = grouped["Area"].nunique()
 
     total_value = grouped[selected_col].sum()
@@ -465,12 +369,8 @@ def update_dashboard(selected_col):
 
     top_area = grouped.iloc[0]["Area"]
 
-
-    # =====================================================
     # Pie Chart
     # Plotly Express
-    # =====================================================
-
     fig_pie = px.pie(
 
         grouped,
@@ -509,12 +409,8 @@ def update_dashboard(selected_col):
 
     )
 
-
-    # =====================================================
     # Bar Chart
     # Plotly Express
-    # =====================================================
-
     fig_bar = px.bar(
 
         grouped,
@@ -545,12 +441,8 @@ def update_dashboard(selected_col):
 
     )
 
-
-    # =====================================================
     # Line Chart
     # Plotly Graph Objects
-    # =====================================================
-
     fig_line = go.Figure()
 
 
@@ -594,14 +486,10 @@ def update_dashboard(selected_col):
             r=20,
             b=20
         )
-
     )
 
 
-    # =====================================================
     # Summary Table
-    # =====================================================
-
     table_header = html.Tr(
 
         [
@@ -675,11 +563,7 @@ def update_dashboard(selected_col):
 
     )
 
-
-    # =====================================================
     # Return Everything
-    # =====================================================
-
     return (
 
         fig_pie,
@@ -701,10 +585,7 @@ def update_dashboard(selected_col):
     )
 
 
-# =========================================================
-# Run App
-# =========================================================
-
+# Run The App
 if __name__ == "__main__":
 
     app.run(debug=True)
